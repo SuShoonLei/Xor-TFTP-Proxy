@@ -7,6 +7,17 @@ import java.awt.Desktop;
 import java.util.Arrays;
 
 
+/*/terminal 1 
+cd /Users/sushoonleikhaing/Downloads/Project2/demo
+mvn compile
+java -cp target/classes pj2.DataServer
+/*/
+
+
+/*/ 
+cd /Users/sushoonleikhaing/Downloads/Project2/demo
+java -cp target/classes pj2.ProxyServer
+/*/
 public class ClientTFTP {
 
     static final String PROXY_HOST = "localhost";
