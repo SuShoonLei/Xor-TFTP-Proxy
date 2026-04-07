@@ -68,13 +68,14 @@ java -cp bin pj2.DataServer
 java -cp bin pj2.ProxyServer
 
 # Terminal 3 — test client (or just use a browser)
-java -cp bin pj2.ClientTFTP display.png
+java -cp bin pj2.ClientTFTP Su.png
 ```
 
-Then open your browser to:
+Then open your browser to any file in `photos/`, for example:
 
 ```
-http://localhost:8080/display.png
+http://localhost:8080/Su.png
+http://localhost:8080/magic.png
 ```
 
 ---
@@ -108,8 +109,9 @@ java -cp bin pj2.ProxyServer --port=8080 --window=8 --drop
 ### ClientTFTP
 
 ```bash
-java -cp bin pj2.ClientTFTP display.png
-java -cp bin pj2.ClientTFTP http://localhost:8080/display.png
+java -cp bin pj2.ClientTFTP Su.png
+java -cp bin pj2.ClientTFTP magic.png
+java -cp bin pj2.ClientTFTP http://localhost:8080/Su.png
 ```
 
 ---
@@ -196,7 +198,8 @@ Project2/
 │   ├── ProxyServer.java     # HTTP↔TFTP proxy with LRU cache
 │   └── ClientTFTP.java      # HTTP test client
 ├── photos/                  # Put image files here
-│   └── display.png
+│   ├── Su.png
+│   └── magic.png
 └── bin/                     # Compiled classes (after javac)
 ```
 

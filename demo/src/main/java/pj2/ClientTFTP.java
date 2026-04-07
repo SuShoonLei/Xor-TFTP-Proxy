@@ -6,23 +6,12 @@ import java.nio.file.*;
 import java.awt.Desktop;
 import java.util.Arrays;
 
-
-/*/terminal 1 
-cd /Users/sushoonleikhaing/Downloads/Project2/demo
-mvn compile
-java -cp target/classes pj2.DataServer
-/*/
-
-
-/*/ terminal 2
-cd /Users/sushoonleikhaing/Downloads/Project2/demo
-java -cp target/classes pj2.ProxyServer
-/*/
-
-/*/ terminal 3
-cd /Users/sushoonleikhaing/Downloads/Project2/demo
-java -cp target/classes pj2.ClientTFTP display.PNG
-/*/
+/**
+ * Fetches files from {@link ProxyServer} over HTTP. Put images in {@code Project2/photos/}.
+ * <p>
+ * Run: DataServer (UDP) → ProxyServer (HTTP) → then either type a filename here or pass it
+ * as an argument, e.g. {@code java -cp target/classes pj2.ClientTFTP Su.png}
+ */
 public class ClientTFTP {
 
     static final String PROXY_HOST = "localhost";
@@ -37,7 +26,7 @@ public class ClientTFTP {
         System.out.println("Proxy: " + PROXY_HOST + ":" + PROXY_PORT);
         System.out.println("Files will be saved to: " + SAVE_DIR);
         System.out.println();
-        System.out.println("Tip: In a web browser open http://localhost:" + PROXY_PORT + "/filename.png");
+        System.out.println("Tip: In a web browser open http://localhost:" + PROXY_PORT + "/<filename>");
         System.out.println("     (http://filename.png alone is NOT localhost — start ProxyServer first.)");
         System.out.println();
 
@@ -45,8 +34,8 @@ public class ClientTFTP {
             fetchAndShow(args[0]);
         } else {
             BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
-            System.out.println("Enter image name or URL (files come from the server photos/ folder).");
-            System.out.println("Examples: display.png   http://localhost:8080/display.png   http://display.png");
+            System.out.println("Enter a filename from the server's photos/ folder, or a full URL.");
+            System.out.println("Examples: Su.png   magic.png   http://localhost:8080/Su.png");
             while (true) {
                 System.out.print("> ");
                 System.out.flush();
@@ -57,13 +46,12 @@ public class ClientTFTP {
                 fetchAndShow(input);
             }
         }
-        System.out.println("Goodbye!");
+        System.out.println("Goodbye!!");
     }
 
     /**
-     * Turn what you typed into an HTTP path like .
-     * Accepts: {@code display.png}, {@code /display.png},
-     * {@code http://localhost:8080/display.PNG}.
+     * Turn user input into an HTTP path (e.g. {@code /Su.png}).
+     * Accepts bare filenames, paths starting with {@code /}, or full {@code http://localhost:8080/...} URLs.
      */
     static String toRequestPath(String input) throws URISyntaxException {
         String s = input.trim();
@@ -73,7 +61,7 @@ public class ClientTFTP {
             if (path != null && path.length() > 1) {
                 return path.startsWith("/") ? path : "/" + path;
             }
-            // No path: e.g. "http://display.png" → use host as filename
+            // No path: e.g. "http://Su.png" → use host as filename
             String host = u.getHost();
             if (host != null && !host.isEmpty()) {
                 return "/" + host;

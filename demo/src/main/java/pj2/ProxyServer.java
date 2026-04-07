@@ -52,7 +52,6 @@ public class ProxyServer {
         }
     );
 
-    // ─────────────────────────────────────────────────────────────────
     public static void main(String[] args) throws Exception {
         ProxyServer proxy = new ProxyServer();
         for (String a : args) {
@@ -74,8 +73,8 @@ public class ProxyServer {
             System.out.println("  → Packet drop: " + (dropRate > 0 ? "1% ON" : "OFF"));
             System.out.println();
             System.out.println("In a BROWSER use this host (not http://picture.png):");
-            System.out.println("  http://localhost:" + httpPort + "/yourfile.png");
-            System.out.println("  (put files in the ./photos/ folder next to DataServer)");
+            System.out.println("  http://localhost:" + httpPort + "/<filename>   e.g. /Su.png or /magic.png");
+            System.out.println("  (put files in Project2/photos/ or demo/photos/)");
             System.out.println("Also: http://localhost:" + httpPort + "/throughput");
 
             while (true) {
@@ -95,8 +94,8 @@ public class ProxyServer {
              OutputStream   out = client.getOutputStream()) {
 
             // Read the first line of the HTTP request, e.g.:
-            //   "GET /display.PNG HTTP/1.1"
-            //   "GET http://localhost:8080/display.PNG HTTP/1.1"  (absolute form)
+            //   "GET /Su.png HTTP/1.1"
+            //   "GET http://localhost:8080/magic.png HTTP/1.1"  (absolute form)
             String line = in.readLine();
             if (line == null || line.isBlank()) return;
 
@@ -183,7 +182,7 @@ public class ProxyServer {
             }
             msg += "<p>Check: (1) <code>DataServer</code> is running on UDP " + dataPort
                 + ", (2) put the file in <code>Project2/photos/</code> or <code>demo/photos/</code> "
-                + "(names can differ by case: <code>display.PNG</code> works for <code>/display.png</code>).</p>";
+                + "(filenames are matched case-insensitively, e.g. <code>Su.png</code> vs <code>su.PNG</code>).</p>";
             sendHtml(out, msg);
             return;
         }

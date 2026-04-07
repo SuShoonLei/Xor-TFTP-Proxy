@@ -62,10 +62,6 @@ public class DataServer {
         }
     }
 
-    /**
-     * Looks in {@code ./photos/} then {@code ../photos/} so images can live next to {@code demo/}
-     * or inside it. Matches {@code display.PNG} if the request used {@code display.png}.
-     */
     static File findPublishedFile(String safeName) {
         for (String root : new String[] { "../photos", "photos" }) {
             File f = findInDirIgnoreCase(root, safeName);
@@ -108,7 +104,7 @@ public class DataServer {
                 clientAddr, clientPort, filename, winSize);
 
             // ── 2. Open the file ───────────────────────────────────────
-            // Strip leading slashes: "/display.PNG" → "display.PNG"
+            // Strip leading slashes: "/Su.png" → "Su.png"
             String safeName = filename.replaceAll("^/+", "");
             File   file     = findPublishedFile(safeName);
 
@@ -119,16 +115,14 @@ public class DataServer {
             byte[] fileBytes = Files.readAllBytes(file.toPath());
 
             // ── 3. HANDSHAKE — exchange IDs and nonces to build XOR key ──
-            //
             //  Both sides generate a random ID (int) and nonce (long).
             //  The XOR session key is derived from both nonces XOR'd together.
             //  This means neither side knows the key until both have spoken.
-            //
             SecureRandom rng     = new SecureRandom();
             int          myID    = rng.nextInt();
             long         myNonce = rng.nextLong();
 
-            // Send HANDSHAKE:  [opcode 2B][myID 4B][myNonce 8B]  = 14 bytes
+            // Send HANDSHAKE
             byte[] hs = buildHandshake(OP_HANDSHAKE, myID, myNonce);
             sock.send(new DatagramPacket(hs, hs.length, clientAddr, clientPort));
 
@@ -150,14 +144,7 @@ public class DataServer {
             System.out.printf("[Session] Key derived: 0x%016X%n", xorKey);
 
             // ── 4. Send DATA blocks with a sliding window ──────────────
-            //
-            //  SLIDING WINDOW means we can send multiple blocks without
-            //  waiting for an ACK for each one:
-            //
-            //    window=1:  send 1, wait for ACK, send 1, wait, ...  (slow)
-            //    window=8:  send 8 at once, then wait for ACKs        (faster)
-            //    window=64: send 64 at once, wait                      (fastest)
-            //
+    
             sendFile(sock, clientAddr, clientPort, fileBytes, winSize, xorKey, filename);
 
         } catch (Exception e) {
@@ -257,21 +244,8 @@ public class DataServer {
             filename, fileBytes.length, kbps, retransmits);
     }
 
-    // ─────────────────────────────────────────────────────────────────────
     //  XOR Encryption
-    // ─────────────────────────────────────────────────────────────────────
-    /**
-     * Encrypt (or decrypt — XOR is symmetric) a byte array.
-     *
-     * The key stream is a XorShift-64 PRNG seeded with:
-     *     seed = xorKey  XOR  (blockIndex << 16)
-     * Using the block index as a salt means block 0 and block 1 get
-     * completely different key streams even with the same master key.
-     *
-     * XorShift-64 advances the 64-bit state with three shift operations.
-     * For each byte of output we advance the state once and XOR the
-     * low 8 bits of the state with the input byte.
-     */
+    
     static byte[] xorEncrypt(byte[] input, long masterKey, int blockIndex) {
         long   seed   = masterKey ^ ((long) blockIndex << 16);
         if (seed == 0) seed = 0xCAFEBABEL;
@@ -289,7 +263,6 @@ public class DataServer {
     // ─────────────────────────────────────────────────────────────────────
     //  Packet builders
     // ─────────────────────────────────────────────────────────────────────
-
     /** HANDSHAKE or HANDSHAKE_ACK: [opcode 2B][senderID 4B][nonce 8B] */
     static byte[] buildHandshake(int opcode, int id, long nonce) {
         byte[] b = new byte[14];
