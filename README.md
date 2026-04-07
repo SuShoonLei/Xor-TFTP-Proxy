@@ -229,5 +229,5 @@ Measured on localhost (same machine) and across two machines. Window sizes 1, 8,
 
 ## Course
 
-Computer Networks — SUNY Oswego  
+Computer Networks @ SUNY Oswego 
 Project 2: Proxy Server with custom TFTP + sliding window + encryption
