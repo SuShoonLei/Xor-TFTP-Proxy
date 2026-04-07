@@ -14,9 +14,14 @@ java -cp target/classes pj2.DataServer
 /*/
 
 
-/*/ 
+/*/ terminal 2
 cd /Users/sushoonleikhaing/Downloads/Project2/demo
 java -cp target/classes pj2.ProxyServer
+/*/
+
+/*/ terminal 3
+cd /Users/sushoonleikhaing/Downloads/Project2/demo
+java -cp target/classes pj2.ClientTFTP display.PNG
 /*/
 public class ClientTFTP {
 
@@ -56,10 +61,9 @@ public class ClientTFTP {
     }
 
     /**
-     * Turn what you typed into an HTTP path like {@code /display.png}.
+     * Turn what you typed into an HTTP path like .
      * Accepts: {@code display.png}, {@code /display.png},
-     * {@code http://localhost:8080/display.png},
-     * or shorthand {@code http://display.png} (host treated as filename).
+     * {@code http://localhost:8080/display.PNG}.
      */
     static String toRequestPath(String input) throws URISyntaxException {
         String s = input.trim();
